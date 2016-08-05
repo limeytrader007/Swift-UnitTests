@@ -23,7 +23,7 @@ class ItemCell: UITableViewCell {
   func configCell(with item: ToDoItem, checked: Bool = false) {
     
     if checked {
-      let attributedString = AttributedString(
+      let attributedString = NSAttributedString(
         string: item.title,
         attributes: [NSStrikethroughStyleAttributeName:
           NSUnderlineStyle.styleSingle.rawValue])

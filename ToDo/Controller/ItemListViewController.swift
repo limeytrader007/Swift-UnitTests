@@ -10,7 +10,7 @@ import UIKit
 
 class ItemListViewController: UIViewController {
   @IBOutlet var tableView: UITableView!
-  @IBOutlet var dataProvider: protocol<UITableViewDataSource,UITableViewDelegate>!
+  @IBOutlet var dataProvider: (UITableViewDataSource & UITableViewDelegate)!
 
   override func viewDidLoad() {
     tableView.dataSource = dataProvider

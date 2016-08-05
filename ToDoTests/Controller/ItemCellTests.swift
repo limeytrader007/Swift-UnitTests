@@ -89,7 +89,7 @@ class ItemCellTests: XCTestCase {
     
     cell.configCell(with: item, checked: true)
     
-    let attributedString = AttributedString(
+    let attributedString = NSAttributedString(
       string: "Foo",
       attributes: [NSStrikethroughStyleAttributeName:
         NSUnderlineStyle.styleSingle.rawValue])
