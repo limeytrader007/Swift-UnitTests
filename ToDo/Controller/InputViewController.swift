@@ -37,12 +37,7 @@ class InputViewController: UIViewController {
     } else {
       date = nil
     }
-    let descriptionString: String?
-    if descriptionTextField.text?.characters.count > 0 {
-      descriptionString = descriptionTextField.text
-    } else {
-      descriptionString = nil
-    }
+    let descriptionString = descriptionTextField.text
     if let locationName = locationTextField.text,
       locationName.characters.count > 0 {
       if let address = addressTextField.text,
