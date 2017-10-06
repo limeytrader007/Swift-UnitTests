@@ -13,6 +13,7 @@ class ItemCellTests: XCTestCase {
   
   var tableView: UITableView!
   let dataSource = FakeDataSource()
+  var cell: ItemCell!
   
   override func setUp() {
     super.setUp()
@@ -27,6 +28,10 @@ class ItemCellTests: XCTestCase {
     
     tableView = controller.tableView
     tableView?.dataSource = dataSource
+    
+    cell = tableView?.dequeueReusableCell(
+      withIdentifier: "ItemCell",
+      for: IndexPath(row: 0, section: 0)) as! ItemCell
   }
   
   override func tearDown() {
@@ -35,52 +40,38 @@ class ItemCellTests: XCTestCase {
   }
   
   func test_HasNameLabel() {
-    let cell = tableView?.dequeueReusableCell(
-      withIdentifier: "ItemCell",
-      for: IndexPath(row: 0, section: 0)) as! ItemCell
-    
     XCTAssertNotNil(cell.titleLabel)
   }
   
   func test_HasLocationLabel() {
-    let cell = tableView?.dequeueReusableCell(
-      withIdentifier: "ItemCell",
-      for: IndexPath(row: 0, section: 0)) as! ItemCell
-    
     XCTAssertNotNil(cell.locationLabel)
   }
   
   func test_HasDateLabel() {
-    let cell = tableView?.dequeueReusableCell(
-      withIdentifier: "ItemCell",
-      for: IndexPath(row: 0, section: 0)) as! ItemCell
-    
     XCTAssertNotNil(cell.dateLabel)
   }
   
   func test_ConfigCell_SetsLabelTexts() {
-    let cell = tableView?.dequeueReusableCell(
-      withIdentifier: "ItemCell",
-      for: IndexPath(row: 0, section: 0)) as! ItemCell
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "MM/dd/yyyy"
+    
+    let date = dateFormatter.date(from: "02/22/2016")!
+    let timestamp = date.timeIntervalSince1970
     
     let location = Location(name: "Bar")
     let item = ToDoItem(title: "Foo",
                         itemDescription: nil,
-                        timestamp: 1456150025,
+                        timestamp: timestamp,
                         location: location)
     
     cell.configCell(with: item)
     
     XCTAssertEqual(cell.titleLabel.text, "Foo")
     XCTAssertEqual(cell.locationLabel.text, "Bar")
-    XCTAssertEqual(cell.dateLabel.text, "02/22/2016")
+    XCTAssertEqual(cell.dateLabel.text, dateFormatter.string(from: date))
   }
   
   func test_Title_WhenItemIsChecked_IsStrokeThrough() {
-    let cell = tableView?.dequeueReusableCell(
-      withIdentifier: "ItemCell",
-      for: IndexPath(row: 0, section: 0)) as! ItemCell
-    
     let location = Location(name: "Bar")
     let item = ToDoItem(title: "Foo",
                         itemDescription: nil,

@@ -62,8 +62,14 @@ class InputViewControllerTests: XCTestCase {
   }
   
   func test_Save_UsesGeocoderToGetCoordinateFromAddress() {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "MM/dd/yyyy"
+    
+    let date = dateFormatter.date(from: "02/22/2016")!
+    let timestamp = date.timeIntervalSince1970
+    
     sut.titleTextField.text = "Foo"
-    sut.dateTextField.text = "02/22/2016"
+    sut.dateTextField.text = dateFormatter.string(from: date)
     sut.locationTextField.text = "Bar"
     sut.addressTextField.text = "Infinite Loop 1, Cupertino"
     sut.descriptionTextField.text = "Baz"
@@ -85,7 +91,7 @@ class InputViewControllerTests: XCTestCase {
     
     let testItem = ToDoItem(title: "Foo",
                             itemDescription: "Baz",
-                            timestamp: 1456095600,
+                            timestamp: timestamp,
                             location: Location(name: "Bar",
                                                coordinate: coordinate))
     
@@ -103,6 +109,30 @@ class InputViewControllerTests: XCTestCase {
     
     XCTAssertTrue(actions.contains("save"))
   }
+    
+    func test_GeoCoder_FetchesCoordinates(){
+        
+        let geocoderAnswered = expectation(description: "Geocoder")
+        
+        CLGeocoder().geocodeAddressString("Infinite Loop 1, Cupertino") { (placemarks, error) in
+            let coordinate = placemarks?.first?.location?.coordinate
+            guard let latitude = coordinate?.latitude else {
+                XCTFail()
+                return
+            }
+            guard let longitude = coordinate?.longitude else {
+                XCTFail()
+                return
+            }
+            
+            XCTAssertEqualWithAccuracy(latitude, 37.3316, accuracy: 0.0001)
+            XCTAssertEqualWithAccuracy(longitude, -122.0300, accuracy: 0.001)
+            
+            geocoderAnswered.fulfill()
+        }
+        
+        waitForExpectations(timeout: 3, handler: nil)
+    }
 
 }
 
@@ -113,7 +143,7 @@ extension InputViewControllerTests {
     
     override func geocodeAddressString(
       _ addressString: String,
-      completionHandler: CLGeocodeCompletionHandler) {
+      completionHandler: @escaping CLGeocodeCompletionHandler) {
       
       self.completionHandler = completionHandler
     }

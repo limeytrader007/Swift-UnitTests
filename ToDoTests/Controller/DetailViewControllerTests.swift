@@ -54,10 +54,16 @@ class DetailViewControllerTests: XCTestCase {
   func test_SettingItemInfo_SetsTextsToLabels() {
     let coordinate = CLLocationCoordinate2DMake(51.2277, 6.7735)
     
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "MM/dd/yyyy"
+    
+    let date = dateFormatter.date(from: "02/22/2016")!
+    let timestamp = date.timeIntervalSince1970
+    
     let location = Location(name: "Foo", coordinate: coordinate)
     let item = ToDoItem(title: "Bar",
                         itemDescription: "Baz",
-                        timestamp: 1456150025,
+                        timestamp: timestamp,
                         location: location)
     
     let itemManager = ItemManager()
@@ -69,7 +75,7 @@ class DetailViewControllerTests: XCTestCase {
     sut.endAppearanceTransition()
     
     XCTAssertEqual(sut.titleLabel.text, "Bar")
-    XCTAssertEqual(sut.dateLabel.text, "02/22/2016")
+    XCTAssertEqual(sut.dateLabel.text, dateFormatter.string(from: date))
     XCTAssertEqual(sut.locationLabel.text, "Foo")
     XCTAssertEqual(sut.descriptionLabel.text, "Baz")
     XCTAssertEqualWithAccuracy(sut.mapView.centerCoordinate.latitude,
